@@ -1,4 +1,4 @@
-package cn.moondev.framework.support.web;
+package cn.moondev.framework.provider.web;
 
 import org.springframework.http.converter.StringHttpMessageConverter;
 
