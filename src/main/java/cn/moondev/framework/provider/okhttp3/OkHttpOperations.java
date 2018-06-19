@@ -103,19 +103,19 @@ public class OkHttpOperations {
     }
 
     private Request buildPostRequest(OkHttpRequest okHttpRequest, Request.Builder builder) {
-        RequestBody body = RequestBody.create(null, new byte[]{});
+        RequestBody requestBody = RequestBody.create(null, new byte[]{});
         if (!CollectionUtils.isEmpty(okHttpRequest.requestParams)) {
             if (Format.PLAIN == okHttpRequest.requestFormat) {
                 FormBody.Builder formBodyBuilder = new FormBody.Builder();
                 for (Map.Entry<String, Object> entry : okHttpRequest.requestParams.entrySet()) {
                     formBodyBuilder.add(entry.getKey(), StringUtils.null2Empty(entry.getValue()));
                 }
-                body = formBodyBuilder.build();
+                requestBody = formBodyBuilder.build();
             } else if (Format.JSON == okHttpRequest.requestFormat) {
-                body = RequestBody.create(MediaType.parse("application/json"),
+                requestBody = RequestBody.create(MediaType.parse("application/json"),
                         JSONObject.toJSONBytes(okHttpRequest.requestParams));
             }
         }
-        return builder.url(okHttpRequest.domain).post(body).build();
+        return builder.url(okHttpRequest.domain).post(requestBody).build();
     }
 }
