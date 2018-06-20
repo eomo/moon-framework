@@ -17,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.CollectionUtils;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -39,13 +40,31 @@ public class OkHttpOperations {
      * 同步请求
      *
      * @param okHttpRequest
+     * @param handler       需要实现convert接口
      * @return
      */
-    public <T> T syncRequest(OkHttpRequest okHttpRequest, ResponseHandler<T> handler) {
+    public <T> List<T> syncRequest(OkHttpRequest okHttpRequest, ResponseHandler<T> handler) {
         Request request = buildRequest(okHttpRequest);
         try {
             Response response = client.newCall(request).execute();
-            return handler.convert(response.body().bytes());
+            return handler.convert(response.body().string());
+        } catch (IOException e) {
+            LOG.error("执行Http同步请求时出现异常，{}", okHttpRequest.toString(), e);
+            return null;
+        }
+    }
+
+    /**
+     * 同步请求，直接返回数据
+     *
+     * @param okHttpRequest
+     * @return
+     */
+    public String directSyncRequest(OkHttpRequest okHttpRequest) {
+        Request request = buildRequest(okHttpRequest);
+        try {
+            Response response = client.newCall(request).execute();
+            return response.body().string();
         } catch (IOException e) {
             LOG.error("执行Http同步请求时出现异常，{}", okHttpRequest.toString(), e);
             return null;
@@ -56,7 +75,7 @@ public class OkHttpOperations {
      * 异步请求
      *
      * @param okHttpRequest
-     * @param handler
+     * @param handler       需要实现handle接口
      * @param <T>
      */
     public <T> void asyncRequest(OkHttpRequest okHttpRequest, ResponseHandler<T> handler) {
@@ -70,7 +89,7 @@ public class OkHttpOperations {
 
             @Override
             public void onResponse(Call call, Response response) throws IOException {
-                handler.handle(response.body().bytes());
+                handler.handle(response.body().string());
             }
         });
     }

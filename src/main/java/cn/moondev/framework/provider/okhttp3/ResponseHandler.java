@@ -1,20 +1,22 @@
 package cn.moondev.framework.provider.okhttp3;
 
+import java.util.List;
+
 public interface ResponseHandler<T> {
 
     /**
      * 将Http请求响应的数据转换成对应的业务对象
      *
-     * @param bytes
+     * @param content
      * @return
      */
-    T convert(byte[] bytes);
+    List<T> convert(String content);
 
 
     /**
      * 将Http请求响应数据进行业务处理
      *
-     * @param bytes
+     * @param content
      */
-    void handle(byte[] bytes);
+    void handle(String content);
 }
