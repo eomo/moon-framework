@@ -63,6 +63,7 @@ public class ExcelUtils<T> {
                     if (Objects.nonNull(excelField)) {
                         Field field = excelField.field;
                         field.setAccessible(true);
+                        field.set(object,cellValue);
                         ReflectionUtils.setField(field,object,cellValue);
                     }
                 }

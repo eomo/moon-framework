@@ -6,7 +6,7 @@ public class User {
     @ExcelColumn(name = "姓名")
     public String name;
     @ExcelColumn(name = "年龄")
-    public int age;
+    public Integer age;
     @ExcelColumn(name = "年级")
     public int grade;
 

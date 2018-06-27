@@ -2,6 +2,7 @@ package cn.moondev.framework.utils;
 
 import org.springframework.util.CollectionUtils;
 
+import java.math.BigDecimal;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -44,5 +45,20 @@ public class StringUtils {
      */
     public static String null2Empty(Object obj) {
         return Objects.isNull(obj) ? "" : obj.toString();
+    }
+
+    /**
+     * 科学计数法转换
+     *
+     * @param object
+     * @return
+     */
+    public static String doubleToString(Object object) {
+        String value = object.toString();
+        if (value.contains("E")) {
+            BigDecimal bigDecimal = new BigDecimal(value);
+            return bigDecimal.toPlainString();
+        }
+        return value;
     }
 }
