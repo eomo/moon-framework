@@ -29,11 +29,13 @@ public class OkHttpOperations {
      * OkHttpClient应全局唯一
      */
     private OkHttpClient client;
+    private long interval;
 
-    public OkHttpOperations(long connectionTimeout) {
+    public OkHttpOperations(long connectionTimeout, long interval) {
         this.client = new OkHttpClient.Builder()
                 .connectTimeout(connectionTimeout, TimeUnit.SECONDS)
                 .build();
+        this.interval = interval;
     }
 
     /**
@@ -44,6 +46,10 @@ public class OkHttpOperations {
      * @return
      */
     public <T> List<T> syncRequest(OkHttpRequest okHttpRequest, ResponseHandler<T> handler) {
+        try {
+            TimeUnit.MILLISECONDS.sleep(interval);
+        } catch (InterruptedException e) {
+        }
         Request request = buildRequest(okHttpRequest);
         try {
             Response response = client.newCall(request).execute();
