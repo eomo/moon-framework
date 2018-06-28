@@ -4,6 +4,7 @@ import cn.moondev.framework.model.Format;
 import cn.moondev.framework.provider.okhttp3.exception.MethodNotSupportedException;
 import cn.moondev.framework.utils.StringUtils;
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.base.Strings;
 import okhttp3.Call;
 import okhttp3.Callback;
 import okhttp3.FormBody;
@@ -123,7 +124,8 @@ public class OkHttpOperations {
 
     private Request buildGetRequest(OkHttpRequest okHttpRequest, Request.Builder builder) {
         String queryString = StringUtils.createLinkString(okHttpRequest.requestParams, false, false);
-        String url = String.format("%s?%s", okHttpRequest.domain, queryString);
+        String url = Strings.isNullOrEmpty(queryString) ? okHttpRequest.domain :
+                String.format("%s?%s", okHttpRequest.domain, queryString);
         return builder.url(url).build();
     }
 

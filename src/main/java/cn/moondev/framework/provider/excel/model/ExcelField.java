@@ -1,4 +1,6 @@
-package cn.moondev.framework.provider.excel;
+package cn.moondev.framework.provider.excel.model;
+
+import cn.moondev.framework.provider.excel.annotation.ExcelColumn;
 
 import java.lang.reflect.Field;
 

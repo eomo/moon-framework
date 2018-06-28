@@ -1,5 +1,9 @@
-package cn.moondev.framework.provider.excel;
+package cn.moondev.framework.provider.excel.utils;
 
+import cn.moondev.framework.provider.excel.annotation.ExcelColumn;
+import cn.moondev.framework.provider.excel.annotation.ExcelSheet;
+import cn.moondev.framework.provider.excel.model.ExcelField;
+import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
 import org.apache.poi.ss.usermodel.Cell;
@@ -8,7 +12,8 @@ import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.ss.usermodel.WorkbookFactory;
-import org.springframework.util.ReflectionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -17,59 +22,69 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
-public class ExcelUtils<T> {
+/**
+ * Excel导入工具类
+ */
+public class ImportExcelUtils {
 
-    public static <T> List<T> importExcel(String path, Class<T> clazz) {
+    private static Logger LOG = LoggerFactory.getLogger(ImportExcelUtils.class);
+
+    /**
+     * 导入Excel
+     *
+     * @param path  Excel文件路径
+     * @param clazz 对应的JavaBean实体类
+     * @return
+     */
+    public static <T> List<T> doImport(String path, Class<T> clazz) {
         File file = new File(path);
         try (Workbook workbook = WorkbookFactory.create(file)) {
-            return importSheet(workbook, clazz);
+            // 获取指定的Sheet
+            Sheet sheet = getSheet(workbook, clazz);
+            if (Objects.isNull(sheet)) {
+                return Lists.newArrayList();
+            }
+            // 获取对应JavaBean的属性信息
+            List<ExcelField> fields = getExcelField(clazz);
+            // 遍历Excel的每一行并组装对应的T对象
+            return newInstanceList(sheet, clazz, fields);
         } catch (Exception e) {
-            e.printStackTrace();
+            LOG.error("导入Excel文件出现异常, path={}", path, e);
+            return null;
         }
-        return null;
     }
 
-
-    public static <T> List<T> importSheet(Workbook workbook, Class<T> clazz) throws IllegalAccessException, InstantiationException {
+    /**
+     * 遍历Sheet的每一行，然后组装对应的T实例
+     */
+    private static <T> List<T> newInstanceList(Sheet sheet, Class<T> clazz, List<ExcelField> fields)
+            throws IllegalAccessException, InstantiationException {
         List<T> list = Lists.newArrayList();
-        String sheetName = getSheetName(clazz);
-        List<ExcelField> fields = getExcelField(clazz);
-        // Excel Sheet
-        Sheet sheet = workbook.getSheet(sheetName);
-        if (Objects.isNull(sheet)) {
-            return Lists.newArrayList();
-        }
         Iterator<Row> iterator = sheet.rowIterator();
-        int index = 0;
         Map<Integer, ExcelField> indexFieldMap = null;
+        boolean firstRow = true;
         Cell cell = null;
         while (iterator.hasNext()) {
             Row row = iterator.next();
-            // 第一行为标题
-            if (index == 0) {
+            if (firstRow) {
                 indexFieldMap = getColumnIndex(fields, row);
-            } else {
-                T object = clazz.newInstance();
-                Iterator<Cell> cellIterator = row.cellIterator();
-                while (cellIterator.hasNext()) {
-                    cell = cellIterator.next();
-                    cell.setCellType(CellType.STRING);
-                    String cellValue = cell.getStringCellValue();
-
-                    ExcelField excelField = indexFieldMap.get(cell.getColumnIndex());
-                    if (Objects.nonNull(excelField)) {
-                        Field field = excelField.field;
-                        field.setAccessible(true);
-                        field.set(object,cellValue);
-                        ReflectionUtils.setField(field,object,cellValue);
-                    }
-                }
-                list.add(object);
+                firstRow = false;
+                continue;
             }
-            index++;
+            T object = clazz.newInstance();
+            Iterator<Cell> cellIterator = row.cellIterator();
+            while (cellIterator.hasNext()) {
+                cell = cellIterator.next();
+                ExcelField excelField = indexFieldMap.get(cell.getColumnIndex());
+                if (Objects.nonNull(excelField)) {
+                    Field field = excelField.field;
+                    field.setAccessible(true);
+                    field.set(object, CellValueUtils.getValue(excelField, cell));
+                }
+            }
+            list.add(object);
         }
         return list;
 
@@ -101,14 +116,18 @@ public class ExcelUtils<T> {
     }
 
     /**
-     * 获取Excel Sheet名称
+     * 获取指定名称的Sheet
      *
      * @param clazz Excel行对应一个Java Class
      * @return
      */
-    private static <T> String getSheetName(Class<T> clazz) {
+    private static Sheet getSheet(Workbook workbook, Class<?> clazz) {
         ExcelSheet sheetAnnotation = clazz.getAnnotation(ExcelSheet.class);
-        return Optional.of(sheetAnnotation.name()).orElse(clazz.getSimpleName());
+        // 如果Excel的Sheet名称为空，那么直接获取第一个Sheet
+        if (Objects.isNull(sheetAnnotation) || Strings.isNullOrEmpty(sheetAnnotation.name())) {
+            return workbook.getSheetAt(0);
+        }
+        return workbook.getSheet(sheetAnnotation.name());
     }
 
     /**

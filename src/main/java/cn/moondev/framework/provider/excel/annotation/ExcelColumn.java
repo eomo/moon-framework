@@ -1,4 +1,4 @@
-package cn.moondev.framework.provider.excel;
+package cn.moondev.framework.provider.excel.annotation;
 
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 
