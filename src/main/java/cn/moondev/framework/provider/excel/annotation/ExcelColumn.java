@@ -29,7 +29,7 @@ public @interface ExcelColumn {
     /**
      * 时间格式化，日期类型时生效
      */
-    String dateformat() default "yyyy-MM-dd HH:mm:ss";
+    String dateformat() default "yyyy-MM-dd";
 
     /**
      * 格式转换，格式A_b
