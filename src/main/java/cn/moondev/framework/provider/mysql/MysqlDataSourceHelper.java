@@ -20,7 +20,7 @@ public class MysqlDataSourceHelper {
         hikariConfig.setJdbcUrl(dataSourceUri);
         hikariConfig.setUsername(user);
         hikariConfig.setPassword(password);
-        hikariConfig.setDriverClassName("com.mysql.jdbc.Driver");
+        hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
         hikariConfig.setMaximumPoolSize(MAX_POOL_SIZE);
         // 想要下面两个配置生效，需要设置为true
         hikariConfig.addDataSourceProperty("cachePrepStmts", true);
