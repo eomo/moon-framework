@@ -30,6 +30,6 @@ public class WebConfigurationSupport extends WebMvcConfigurationSupport {
 
     @Override
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler(new String[]{"/static/**"}).addResourceLocations(new String[]{"classpath:/static/"});
+        registry.addResourceHandler(new String[]{"/webapps/**"}).addResourceLocations(new String[]{"classpath:/webapps/"});
     }
 }
