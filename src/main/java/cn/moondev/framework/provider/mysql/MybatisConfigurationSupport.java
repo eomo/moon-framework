@@ -24,7 +24,8 @@ import java.util.List;
 
 /**
  * MyBatis支持
- * @Author CHEN川(luecsc@sina.com)
+ *
+ * @Author CHEN川(luecsc @ sina.com)
  */
 public abstract class MybatisConfigurationSupport {
 
@@ -80,7 +81,7 @@ public abstract class MybatisConfigurationSupport {
     @Bean
     public HikariDataSource dataSource() {
         // 数据库密码加密代码可以添加在此处
-        return MysqlDataSourceHelper.dataSource(dataSourceUri,user,password);
+        return MysqlDataSourceHelper.dataSource(dataSourceUri, user, password);
     }
 
     @Bean
@@ -131,7 +132,7 @@ public abstract class MybatisConfigurationSupport {
                 Resource[] mappers = resourceResolver.getResources(mapperLocation);
                 resources.addAll(Arrays.asList(mappers));
             } catch (IOException e) {
-                LOGGER.info("解析mapper路径出现IO异常,请检查配置路径是否正确");
+                LOGGER.warn("解析mapper路径出现IO异常,请检查配置路径是否正确,如未使用mapper.xml请忽略此警告");
             }
         }
         return resources.toArray(new Resource[resources.size()]);
