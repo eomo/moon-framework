@@ -37,7 +37,6 @@ public class OkHttpRequest {
         requestHeader.put("Accept-Language","zh-CN,zh;q=0.9");
         requestHeader.put("Connection","keep-alive");
         requestHeader.put("DNT","1");
-        requestHeader.put("Host","data.eastmoney.com");
         requestHeader.put("User-Agent","Mozilla/5.0 (Macintosh; Intel Mac OS X 10_13_4) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/67.0.3396.87 Safari/537.36");
     }
 
