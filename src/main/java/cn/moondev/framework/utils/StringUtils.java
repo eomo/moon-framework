@@ -1,6 +1,7 @@
 package cn.moondev.framework.utils;
 
 import org.springframework.util.CollectionUtils;
+import org.springframework.util.DigestUtils;
 
 import java.math.BigDecimal;
 import java.util.Map;
