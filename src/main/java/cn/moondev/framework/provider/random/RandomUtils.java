@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package cn.moondev.framework.utils;
+package cn.moondev.framework.provider.random;
 
 import java.util.Random;
 

@@ -1,8 +1,6 @@
 package cn.moondev.framework.provider.excel.utils;
 
 import cn.moondev.framework.provider.excel.model.ExcelField;
-import cn.moondev.framework.utils.DateUtils;
-import cn.moondev.framework.utils.StringUtils;
 import com.google.common.base.Strings;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellType;
@@ -12,8 +10,10 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 import java.util.Objects;
 
@@ -55,7 +55,7 @@ public class CellValueUtils {
         if (String.class.equals(fieldType)) {
             if (value instanceof Double) {
                 // 处理科学计数法
-                return StringUtils.doubleToString(value);
+                return doubleToString(value);
             }
             return String.valueOf(value);
         }
@@ -147,10 +147,10 @@ public class CellValueUtils {
             return new Timestamp(cellDate.getTime());
         }
         if (LocalDate.class.equals(clazz)) {
-            return DateUtils.convertToLocalDate(cellDate);
+            return convertToLocalDate(cellDate);
         }
         if (LocalDateTime.class.equals(clazz)) {
-            return DateUtils.convertToLocalDateTime(cellDate);
+            return convertToLocalDateTime(cellDate);
         }
         return cellDate;
     }
@@ -174,7 +174,7 @@ public class CellValueUtils {
                     return cell.getStringCellValue();
                 }
                 Date cellDate = DateUtil.getJavaDate(cell.getNumericCellValue());
-                return DateUtils.format(cellDate, field.column.dateformat());
+                return format(cellDate, field.column.dateformat());
             }
         }
         // 其他情况直接返回数字
@@ -227,5 +227,32 @@ public class CellValueUtils {
         } catch (Exception e) {
             return Double.valueOf(String.valueOf(value)).shortValue();
         }
+    }
+
+    /**
+     * 科学计数法转换
+     */
+    private static String doubleToString(Object object) {
+        String value = object.toString();
+        if (value.contains("E")) {
+            BigDecimal bigDecimal = new BigDecimal(value);
+            return bigDecimal.toPlainString();
+        }
+        return value;
+    }
+
+    public static LocalDate convertToLocalDate(Date dateToConvert) {
+        return dateToConvert.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    public static LocalDateTime convertToLocalDateTime(Date dateToConvert) {
+        return dateToConvert.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
+
+    public static String format(Date date, String format) {
+        if (!Strings.isNullOrEmpty(format) || Objects.nonNull(date)) {
+            return new SimpleDateFormat(format).format(date);
+        }
+        return null;
     }
 }

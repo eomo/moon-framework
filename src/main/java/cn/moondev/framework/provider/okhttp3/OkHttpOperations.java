@@ -20,7 +20,10 @@ import org.springframework.util.CollectionUtils;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 public class OkHttpOperations {
 
@@ -123,7 +126,7 @@ public class OkHttpOperations {
     }
 
     private Request buildGetRequest(OkHttpRequest okHttpRequest, Request.Builder builder) {
-        String queryString = StringUtils.createLinkString(okHttpRequest.requestParams, false, false);
+        String queryString = createLinkString(okHttpRequest.requestParams, false, false);
         String url = Strings.isNullOrEmpty(queryString) ? okHttpRequest.domain :
                 String.format("%s?%s", okHttpRequest.domain, queryString);
         return builder.url(url).build();
@@ -144,5 +147,32 @@ public class OkHttpOperations {
             }
         }
         return builder.url(okHttpRequest.domain).post(requestBody).build();
+    }
+
+    /**
+     * 将Map转换成&=连接的字符串
+     *
+     * @param map  参数Map
+     * @param sort 是否需要排序
+     * @return
+     */
+    private String createLinkString(Map<String, Object> map, boolean sort, boolean ignoreNull) {
+        if (!CollectionUtils.isEmpty(map)) {
+            Set<String> keys = map.keySet();
+            if (sort) {
+                keys.stream().sorted((a, b) -> a.compareToIgnoreCase(b)).collect(Collectors.toList());
+            }
+            StringBuilder sb = new StringBuilder();
+            Object value = null;
+            for (String key : keys) {
+                value = map.get(key);
+                if (ignoreNull && Objects.isNull(value)) {
+                    continue;
+                }
+                sb.append(key).append("=").append(Objects.isNull(value) ? "" : value.toString()).append("&");
+            }
+            return sb.toString();
+        }
+        return "";
     }
 }
