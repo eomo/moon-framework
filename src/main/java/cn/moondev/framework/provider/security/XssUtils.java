@@ -11,30 +11,9 @@ public class XssUtils {
         if (null == src || src.isEmpty()) {
             return src;
         }
-        return escapeCharacter(stripXSSAndSql(src));
+        return stripXSSAndSql(src);
     }
 
-    /**
-     * 对部分特殊字符进行转义(半角->全角)
-     */
-    public static String escapeCharacter(String src) {
-        StringBuilder sb = new StringBuilder(src.length() + 16);
-        for (int i = 0; i < src.length(); i++) {
-            char c = src.charAt(i);
-            switch (c) {
-                case '>':
-                    sb.append("＞");// 转义大于号
-                    break;
-                case '<':
-                    sb.append("＜");// 转义小于号
-                    break;
-                default:
-                    sb.append(c);
-                    break;
-            }
-        }
-        return sb.toString();
-    }
 
     /**
      * 去掉字符串中的脚本内容

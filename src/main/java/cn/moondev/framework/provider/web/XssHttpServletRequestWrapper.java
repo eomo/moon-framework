@@ -1,5 +1,6 @@
 package cn.moondev.framework.provider.web;
 
+import com.google.common.base.Strings;
 import org.springframework.web.util.HtmlUtils;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,14 +14,14 @@ public class XssHttpServletRequestWrapper extends HttpServletRequestWrapper {
 
     @Override
     public String getHeader(String name) {
-        String value = super.getHeader(name);
-        return HtmlUtils.htmlEscape(value);
+        String header = super.getHeader(name);
+        return Strings.isNullOrEmpty(header) ? header : HtmlUtils.htmlEscape(header);
     }
 
     @Override
     public String getParameter(String name) {
-        String value = super.getParameter(name);
-        return HtmlUtils.htmlEscape(value);
+        String param = super.getParameter(name);
+        return Strings.isNullOrEmpty(param) ? param : HtmlUtils.htmlEscape(param);
     }
 
     @Override
