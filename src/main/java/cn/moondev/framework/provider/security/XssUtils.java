@@ -28,18 +28,6 @@ public class XssUtils {
                 case '<':
                     sb.append("＜");// 转义小于号
                     break;
-                case '\'':
-                    sb.append("＇");// 转义单引号
-                    break;
-                case '\"':
-                    sb.append("＂");// 转义双引号
-                    break;
-                case '&':
-                    sb.append("＆");// 转义&
-                    break;
-                case '#':
-                    sb.append("＃");// 转义#
-                    break;
                 default:
                     sb.append(c);
                     break;

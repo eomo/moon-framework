@@ -2,7 +2,6 @@ package cn.moondev.framework.provider.okhttp3;
 
 import cn.moondev.framework.model.Format;
 import cn.moondev.framework.provider.okhttp3.exception.MethodNotSupportedException;
-import cn.moondev.framework.utils.StringUtils;
 import com.alibaba.fastjson.JSONObject;
 import com.google.common.base.Strings;
 import okhttp3.Call;
@@ -138,7 +137,7 @@ public class OkHttpOperations {
             if (Format.PLAIN == okHttpRequest.requestFormat) {
                 FormBody.Builder formBodyBuilder = new FormBody.Builder();
                 for (Map.Entry<String, Object> entry : okHttpRequest.requestParams.entrySet()) {
-                    formBodyBuilder.add(entry.getKey(), StringUtils.null2Empty(entry.getValue()));
+                    formBodyBuilder.add(entry.getKey(), Objects.isNull(entry.getValue()) ? "" : entry.getValue().toString());
                 }
                 requestBody = formBodyBuilder.build();
             } else if (Format.JSON == okHttpRequest.requestFormat) {
