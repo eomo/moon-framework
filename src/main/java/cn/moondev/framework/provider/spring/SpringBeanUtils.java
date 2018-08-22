@@ -6,7 +6,7 @@ import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-public class SpringBeanHelper implements ApplicationContextAware {
+public class SpringBeanUtils implements ApplicationContextAware {
 
     protected static ApplicationContext applicationContext;
 
@@ -28,7 +28,7 @@ public class SpringBeanHelper implements ApplicationContextAware {
 
     @Override
     public void setApplicationContext(ApplicationContext applicationContext) {
-        SpringBeanHelper.applicationContext = applicationContext;
+        SpringBeanUtils.applicationContext = applicationContext;
     }
 
     public static String projectDir() {
