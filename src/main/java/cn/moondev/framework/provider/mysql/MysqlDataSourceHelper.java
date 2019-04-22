@@ -23,7 +23,7 @@ public class MysqlDataSourceHelper {
         hikariConfig.setDriverClassName("com.mysql.cj.jdbc.Driver");
         hikariConfig.setMaximumPoolSize(MAX_POOL_SIZE);
         // 想要下面两个配置生效，需要设置为true
-        hikariConfig.addDataSourceProperty("cachePrepStmts", true);
+        hikariConfig.addDataSourceProperty("cachePrepStmts", false);
         // mysql缓存的prepared statements数量，建议：250 - 500
         hikariConfig.addDataSourceProperty("prepStmtCacheSize", 250);
         // mysql驱动将缓存的sql语句的最大长度，mysql默认值为256，根据经验设置为2048
