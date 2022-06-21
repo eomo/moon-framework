@@ -24,7 +24,7 @@
         <fastjson.version>1.2.76</fastjson.version>
         <logback.version>1.2.3</logback.version>
         <okhttp.version>3.9.0</okhttp.version>
-        <mysql-connector.version>8.0.11</mysql-connector.version>
+        <mysql-connector.version>8.0.28</mysql-connector.version>
         <mybatis.spring.version>1.3.2</mybatis.spring.version>
         <hikaricp.version>2.7.2</hikaricp.version>
     </properties>
